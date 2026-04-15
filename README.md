@@ -26,8 +26,8 @@ A professional web-based dashboard for managing CCTV installation jobs and custo
    - Open the solution in Visual Studio or your preferred terminal.
    - Update the ConnectionStrings in appsettings.json to point to your SQL Server instance.
    - Run the following commands in the Package Manager Console:
-       **Add-Migration Initial**
-       **Update-Database**
+       - **Add-Migration Initial**
+       - **Update-Database**
      
 3. **Run the Backend API:**
    - Press **F5** in Visual Studio or run:
