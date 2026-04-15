@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCTV Management Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="logo">
+            <span>🛡️ CCTV</span>
+        </div>
+        <nav>
+            <div class="nav-item active" onclick="window.location.href='index.html'" style="cursor: pointer;">
+            📁 All Jobs
+            </div>
+    
+            <div class="nav-item" onclick="window.location.href='customer.html'" style="cursor: pointer;">
+            👥 Customers
+            </div>
+        </nav>
+    </aside>
+
+    <div class="main-wrapper">
+        <header>
+            <div class="header-info">
+                <h1>Installation Jobs Overview</h1>
+                <p>Manage camera installation jobs in real-time.</p>
+                <div class="filter-container">
+                    <select id="statusFilter" class="filter-select">
+                        <option value="">All Statuses</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                        <option value="In Progress">In Progress</option>
+                    </select>
+                </div>
+            </div>
+            <div class="header-actions">
+                
+                <div id="connection-status" class="status-offline">Connecting...</div>
+                <button id="open-modal-btn" class="btn-primary">Create New Job</button>
+                
+            </div>
+        </header>
+
+      
+
+        <main>
+            <section class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Job ID</th>
+                            <th>Customer Name</th>
+                            <th>Job Title</th>
+                            <th>Scheduled Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="job-table-body">
+                        </tbody>
+                </table>
+            </section>
+        </main>
+
+        <div id="job-modal" class="modal">
+            <div class="modal-content">
+                <h3>Create New Installation Job</h3>
+                <form id="add-job-form">
+                    <label style="font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; display: block;">JOB TITLE</label>
+                    <input type="text" id="jobTitle" placeholder="e.g., Company Camera Setup" required>
+                    
+                    <label style="font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; display: block;">CUSTOMER ID</label>
+                    <input type="number" id="customerId" placeholder="Enter Customer ID" required>
+                    
+                    <label style="font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; display: block;">DESCRIPTION</label>
+                    <textarea id="jobDescription" rows="3" placeholder="Job details..."></textarea>
+                    
+                    <div class="modal-actions">
+                        <button type="button" id="close-modal-btn" class="btn-secondary">Cancel</button>
+                        <button type="submit" class="btn-primary">Create Job</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>

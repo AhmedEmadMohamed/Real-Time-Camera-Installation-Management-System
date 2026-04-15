@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCTV Admin - Customers</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="logo">
+            <span>🛡️ CCTV</span>
+        </div>
+        <nav>
+            <div class="nav-item" onclick="window.location.href='index.html'">
+                📁 All Jobs
+            </div>
+            <div class="nav-item active" onclick="window.location.href='customer.html'">
+                👥 Customers
+            </div>
+        </nav>
+    </aside>
+
+    <div class="main-wrapper">
+        <header>
+            <div class="header-info">
+                <h1>Customers</h1>
+                <p>View your registered customers.</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn-primary" onclick="openModal()">Add New Customer</button>
+            </div>
+        </header>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Customer ID</th>
+                        <th>Name</th>
+                        <th>Phone Number</th>
+                        <th>Address</th>
+                    </tr>
+                </thead>
+                <tbody id="customer-table-body">
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding: 30px; color: var(--text-muted);">
+                            Loading customer data...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+<div id="addCustomerModal" class="modal">
+    <div class="modal-content">
+        <h3>Add New Customer</h3>
+        <input type="text" id="custName" placeholder="Full Name" required>
+        <input type="text" id="custPhone" placeholder="Phone Number" required>
+        <small style="color: var(--text-muted); display: block; margin-top: -12px; margin-bottom: 12px; font-size: 0.8rem;">
+            * Note: Must be a valid Egyptian number (11 digits).
+        </small>
+        <textarea id="custAddress" placeholder="Address" rows="3"></textarea>
+        
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+            <button class="btn-primary" onclick="submitCustomer()">Create Customer</button>
+        </div>
+    </div>
+</div>
+    <script>
+        
+        const API_BASE_URL = "https://localhost:7267/api"; 
+
+        async function fetchCustomers() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/customers`);
+                
+                if (!response.ok) {
+                    throw new Error("Could not fetch customers");
+                }
+
+                const customers = await response.json();
+                const tableBody = document.getElementById("customer-table-body");
+
+               
+                tableBody.innerHTML = "";
+
+                if (customers.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 20px;">No customers found.</td></tr>`;
+                    return;
+                }
+
+                
+                customers.forEach(customer => {
+                    const row = document.createElement("tr");
+                    row.className = "clickable-row";
+                    
+                    row.innerHTML = `
+                        <td><strong>#${customer.customerId}</strong></td>
+                        <td>${customer.customerName}</td>
+                        <td>${customer.customerPhone || 'N/A'}</td>
+                        <td style="color: var(--text-muted);">${customer.customerAddress || 'No Address'}</td>
+                    `;
+                    
+                    tableBody.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById("customer-table-body").innerHTML = 
+                    `<tr><td colspan="4" style="text-align: center; color: var(--danger); padding: 20px;">Failed to load data. Make sure API is running.</td></tr>`;
+            }
+        }
+      
+function openModal() {
+    document.getElementById("addCustomerModal").style.display = "flex";
+}
+
+function closeModal() {
+    document.getElementById("addCustomerModal").style.display = "none";
+    
+    document.getElementById("custName").value = "";
+    document.getElementById("custPhone").value = "";
+    document.getElementById("custAddress").value = "";
+}
+
+
+async function submitCustomer() {
+    const customerData = {
+        customerName: document.getElementById("custName").value,
+        customerPhone: document.getElementById("custPhone").value,
+        customerAddress: document.getElementById("custAddress").value
+    };
+
+    if (!customerData.customerName || !customerData.customerPhone) {
+        alert("Please fill in the Name and Phone fields.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/customers`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(customerData) // يتوافق مع CreateCustomerDTO
+        });
+
+        if (response.ok) {
+            alert("Customer Created Successfully!");
+            closeModal();
+            loadCustomers(); // تحديث الجدول عشان العميل الجديد يظهر فوراً
+        } else {
+            alert("Error creating customer.");
+        }
+    } catch (err) {
+        console.error("Error:", err);
+    }
+}
+
+
+window.onclick = function(event) {
+    const modal = document.getElementById("addCustomerModal");
+    if (event.target == modal) closeModal();
+}
+
+       
+        window.onload = fetchCustomers;
+    </script>
+
+</body>
+</html>
